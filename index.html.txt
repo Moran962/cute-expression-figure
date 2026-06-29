@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>表情小摆件</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', 'Comic Sans MS', '幼圆', 'YouYuan', sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(20px);
+      border-radius: 60px;
+      padding: 40px 30px 30px;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 400px;
+      transition: transform 0.2s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+    .character {
+      width: 220px;
+      height: 220px;
+      background: #ffe0b2;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1), inset 0 -10px 20px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+      transition: background 0.4s ease;
+    }
+
+    /* 小耳朵 */
+    .ear {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background: #ffb74d;
+      border-radius: 50%;
+      top: -15px;
+      box-shadow: inset 0 5px 5px rgba(0,0,0,0.1);
+    }
+
+    .ear.left {
+      left: 30px;
+      transform: rotate(-15deg);
+    }
+
+    .ear.right {
+      right: 30px;
+      transform: rotate(15deg);
+    }
+
+    /* 眼睛 */
+    .eyes {
+      position: absolute;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      justify-content: center;
+      gap: 35px;
+    }
+
+    .eye {
+      width: 30px;
+      height: 30px;
+      background: #3e2723;
+      border-radius: 50%;
+      position: relative;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 眼白高光 */
+    .eye::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: white;
+      border-radius: 50%;
+      top: 5px;
+      right: 5px;
+      opacity: 0.9;
+    }
+
+    /* 嘴巴区域 */
+    .mouth {
+      position: absolute;
+      bottom: 55px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: all 0.3s ease;
+    }
+
+    /* 默认微笑 */
+    .mouth-smile {
+      width: 50px;
+      height: 25px;
+      border-bottom: 4px solid #5d4037;
+      border-radius: 0 0 25px 25px;
+    }
+
+    /* 惊讶圆嘴 */
+    .mouth-surprise {
+      width: 30px;
+      height: 30px;
+      background: #5d4037;
+      border-radius: 50%;
+      margin-top: 5px;
+    }
+
+    /* 亲亲嘴 */
+    .mouth-kiss {
+      width: 20px;
+      height: 20px;
+      background: #e57373;
+      border-radius: 50%;
+      position: relative;
+      margin-top: 8px;
+    }
+
+    .mouth-kiss::after {
+      content: "❤️";
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+      animation: floatHeart 1.2s ease-in-out infinite;
+    }
+
+    /* 调皮吐舌 */
+    .mouth-tongue {
+      width: 35px;
+      height: 18px;
+      background: #e57373;
+      border-radius: 0 0 15px 15px;
+      margin-top: 10px;
+      position: relative;
+    }
+
+    .mouth-tongue::before {
+      content: "";
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 10px;
+      background: #e57373;
+      border-radius: 10px 10px 0 0;
+    }
+
+    /* 腮红 */
+    .blush {
+      position: absolute;
+      width: 25px;
+      height: 15px;
+      background: #ff8a80;
+      border-radius: 50%;
+      top: 105px;
+      opacity: 0.5;
+      transition: opacity 0.3s;
+    }
+
+    .blush.left {
+      left: 45px;
+    }
+
+    .blush.right {
+      right: 45px;
+    }
+
+    .expression-name {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #ad1457;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+      text-shadow: 2px 2px 0 rgba(255,255,255,0.8);
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .btn {
+      background: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 40px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #ad1457;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255,255,255,0.6);
+    }
+
+    .btn:hover {
+      background: white;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    @keyframes floatHeart {
+      0% { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+      50% { transform: translateX(-50%) translateY(-15px) scale(1.3); opacity: 0.8; }
+      100% { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+    }
+
+    /* 移动端调整 */
+    @media (max-width: 450px) {
+      .character {
+        width: 180px;
+        height: 180px;
+      }
+      .eyes {
+        gap: 25px;
+        top: 55px;
+      }
+      .ear {
+        width: 40px;
+        height: 40px;
+        top: -12px;
+      }
+      .ear.left { left: 20px; }
+      .ear.right { right: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="character" id="character">
+      <div class="ear left"></div>
+      <div class="ear right"></div>
+      <div class="eyes">
+        <div class="eye" id="leftEye"></div>
+        <div class="eye" id="rightEye"></div>
+      </div>
+      <div class="mouth" id="mouth"></div>
+      <div class="blush left"></div>
+      <div class="blush right"></div>
+    </div>
+
+    <div class="expression-name" id="expressionName">😊 开心</div>
+
+    <div class="button-group">
+      <button class="btn" onclick="setExpression('happy')">😊 开心</button>
+      <button class="btn" onclick="setExpression('surprised')">😮 惊讶</button>
+      <button class="btn" onclick="setExpression('kiss')">😘 亲亲</button>
+      <button class="btn" onclick="setExpression('silly')">😜 调皮</button>
+      <button class="btn" onclick="setExpression('cool')">😎 酷酷</button>
+      <button class="btn" onclick="setExpression('love')">🥰 爱心</button>
+    </div>
+  </div>
+
+  <script>
+    const character = document.getElementById('character');
+    const mouthDiv = document.getElementById('mouth');
+    const leftEye = document.getElementById('leftEye');
+    const rightEye = document.getElementById('rightEye');
+    const expressionName = document.getElementById('expressionName');
+
+    // 表情配置
+    const expressions = {
+      happy: {
+        name: '😊 开心',
+        mouthClass: 'mouth-smile',
+        eyeStyle: { background: '#3e2723', borderRadius: '50%', width: '30px', height: '30px' },
+        characterBg: '#ffe0b2',
+        blushOpacity: '0.5'
+      },
+      surprised: {
+        name: '😮 惊讶',
+        mouthClass: 'mouth-surprise',
+        eyeStyle: { background: '#3e2723', borderRadius: '50%', width: '38px', height: '38px' },
+        characterBg: '#ffcc80',
+        blushOpacity: '0.2'
+      },
+      kiss: {
+        name: '😘 亲亲',
+        mouthClass: 'mouth-kiss',
+        eyeStyle: { background: '#3e2723', borderRadius: '50%', width: '20px', height: '30px' },
+        characterBg: '#ffccbc',
+        blushOpacity: '0.7'
+      },
+      silly: {
+        name: '😜 调皮',
+        mouthClass: 'mouth-tongue',
+        eyeStyle: { background: '#3e2723', borderRadius: '50%', width: '30px', height: '30px' },
+        characterBg: '#ffe0b2',
+        blushOpacity: '0.6'
+      },
+      cool: {
+        name: '😎 酷酷',
+        mouthClass: 'mouth-smile',
+        eyeStyle: { background: '#2c3e50', borderRadius: '20%', width: '35px', height: '12px' },
+        characterBg: '#f8bbd0',
+        blushOpacity: '0.3'
+      },
+      love: {
+        name: '🥰 爱心',
+        mouthClass: 'mouth-smile',
+        eyeStyle: { background: '#d81b60', borderRadius: '50%', width: '28px', height: '28px' },
+        characterBg: '#f8bbd0',
+        blushOpacity: '0.8'
+      }
+    };
+
+    function setExpression(type) {
+      const config = expressions[type];
+      if (!config) return;
+
+      // 更新名称
+      expressionName.textContent = config.name;
+
+      // 更新嘴巴样式
+      mouthDiv.className = 'mouth ' + config.mouthClass;
+
+      // 更新眼睛样式
+      leftEye.style.background = config.eyeStyle.background;
+      leftEye.style.borderRadius = config.eyeStyle.borderRadius;
+      leftEye.style.width = config.eyeStyle.width;
+      leftEye.style.height = config.eyeStyle.height;
+
+      rightEye.style.background = config.eyeStyle.background;
+      rightEye.style.borderRadius = config.eyeStyle.borderRadius;
+      rightEye.style.width = config.eyeStyle.width;
+      rightEye.style.height = config.eyeStyle.height;
+
+      // 更新角色背景
+      character.style.background = config.characterBg;
+
+      // 更新腮红透明度
+      document.querySelectorAll('.blush').forEach(el => {
+        el.style.opacity = config.blushOpacity;
+      });
+
+      // 特殊处理: 酷酷表情添加墨镜效果(通过眼睛形状实现)，爱心表情眼睛变粉色已完成
+      if (type === 'cool') {
+        leftEye.style.boxShadow = '0 0 0 2px #1e272e';
+        rightEye.style.boxShadow = '0 0 0 2px #1e272e';
+      } else {
+        leftEye.style.boxShadow = 'none';
+        rightEye.style.boxShadow = 'none';
+      }
+    }
+
+    // 默认显示开心
+    setExpression('happy');
+  </script>
+</body>
+</html>
